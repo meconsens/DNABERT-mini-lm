@@ -43,7 +43,9 @@ for row in reader:
         predictions.append((f"This might be an input sequence from a {class_name} promoter region.\n"))
         sequence_count=sequence_count+1
     else:
+        print('sequence_count < 100 ')
         exit
+    
 with open(output_path, 'w') as f:
         f.writelines(predictions)
 

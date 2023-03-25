@@ -1,13 +1,12 @@
-
 {
     "include": ["src"],
     "compilerOptions": {
         "esModuleInterop": true,
         "lib": ["esnext", "dom"],
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "classic",
         "outDir": "bin/",
         "strict": true,
-        "target": "es2018"
+        "target": "es2022"
     }
 }
