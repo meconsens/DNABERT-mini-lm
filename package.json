@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@oasislabs/parcel": "^1.0.0-beta.24",
+        "npx": "^10.2.2",
         "safe-buffer": "^5.2.1"
     },
     "devDependencies": {

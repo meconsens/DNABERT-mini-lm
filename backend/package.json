@@ -1,0 +1,16 @@
+{
+  "name": "bertback",
+  "version": "1.0.0",
+  "description": "this is a minibert backend talking to parcel",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@oasislabs/parcel": "^1.0.0-beta.24",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  }
+}
