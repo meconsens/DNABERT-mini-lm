@@ -6,3 +6,6 @@ output_document
 package-lock.json
 #node_modules
 node_modules
+# Cipher related
+cipher-slr/target
+cipher-slr/Cargo.lock

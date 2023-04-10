@@ -1,0 +1,34 @@
+[package]
+name = "cipher-slr"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+cbor = { version = "0.5.1", package = "oasis-cbor" }
+oasis-contract-sdk = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "contract-sdk/v0.3.0" }
+oasis-contract-sdk-storage = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "contract-sdk/v0.3.0" }
+linfa = "0.6.0"
+linfa-trees = "0.6.0"
+linfa-datasets = { version = "0.6.0", features = ["iris"] }
+ndarray = "0.15.6"
+getrandom = { version = "0.2.8", features = ["js"] }
+
+
+# Third party.
+thiserror = "1.0.30"
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+panic = "abort"
+incremental = false
+overflow-checks = true
+strip = true
