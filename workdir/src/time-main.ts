@@ -18,7 +18,7 @@ const parcelBob = new Parcel({
     },
 });
 const bobId = (await parcelBob.getCurrentIdentity()).id;
-console.log(bobId);
+console.log(`Bob's Id:${bobId}`);
 
 // create acme parcel
 const parcelAcme = new Parcel({
@@ -34,43 +34,63 @@ const parcelAcme = new Parcel({
   },
 });
 
-const acmeIdentity = await parcelAcme.getCurrentIdentity();
-console.log(`Uploading data with identity: ${acmeIdentity.id}`);
-
 // const bobId = 'I48fb42eWusXLBT3mx74uYF' as IdentityId;
 const appId = 'AFm8mvPu3tzM6r9jR72G4A6' as AppId;
 
-const bobDocument = await parcelAcme.uploadDocument(
-  await fs.promises.readFile('dna-bert/test_workdir/data/in/sequence_sample.csv'),
-  { details: { title: 'sequence sample' }, toApp: appId, owner: bobId},
-).finished;
+const documentIdLst = [];
+const documentsLst = [1, 5, 20, 100];
 
-console.log(`Created document ${bobDocument.id} with owner ${bobDocument.owner}`);
+for (let i=0; i < documentsLst.length; i++) {
+  let bobDocument = await parcelAcme.uploadDocument(
+    await fs.promises.readFile(`dna-bert/test_workdir/data/in/sequence_sample_${documentsLst[i]}.csv`),
+    { details: { title: `sequence sample ${documentsLst[i]}` }, toApp: appId, owner: bobId},
+  ).finished;
 
-await parcelBob.createGrant({
-  grantee: appId,
-  condition: { 'document.id': { $eq: bobDocument.id } },
-});
+  console.log(`Created document ${bobDocument.id} with owner ${bobDocument.owner}`);
+  documentIdLst.push(bobDocument.id)
 
-console.log("Bob granted access to Acme to run job");
+}
+console.log(documentIdLst);
+for (let i=0; i < documentIdLst.length; i++)
+{
+  await parcelBob.createGrant({
+    grantee: appId,
+    condition: { 'document.id': { $eq: documentIdLst[i] } },
+  });
 
-console.log('Downloading output document as Bob.');
-const outputDownload = parcelAcme.downloadDocument(bobDocument.id);
-const outputSaver = fs.createWriteStream(`/tmp/output_document`);
-await outputDownload.pipeTo(outputSaver);
-const output = fs.readFileSync('/tmp/output_document', 'utf-8');
-console.log(`Here's the computed result: "${output}"`);
+  console.log(`Bob has granted Acme access to document ${documentIdLst[i]}`);
 
+}
+
+
+// console.log('Downloading output document as Bob.');
+// const outputDownload = parcelAcme.downloadDocument(bobDocument.id);
+// const outputSaver = fs.createWriteStream(`/tmp/output_document`);
+// await outputDownload.pipeTo(outputSaver);
+// const output = fs.readFileSync('/tmp/output_document', 'utf-8');
+// console.log(`Here's the computed result: "${output}"`);
+
+const inputDocuments = [];
+const cmd = [];
+
+for (let i=0; i < documentIdLst.length; i++)
+{
+  inputDocuments.push({
+    mountPath: `test_${documentsLst[i]}.csv`,
+    id: documentIdLst[i]
+  })
+  cmd.push(`/parcel/data/in/test_${documentsLst[i]}.csv`);
+}
+cmd.push('/parcel/data/out/prediction.txt');
+console.log(inputDocuments);
+console.log(cmd);
 
 const jobSpec: JobSpec = {
     name: 'dna-pred',
-    image: 'mattchoi531/dna-bert',
-    inputDocuments: [{ mountPath: 'test.csv', id: bobDocument.id }],
+    image: 'mattchoi531/dna-bert-timer',
+    inputDocuments: inputDocuments,
     outputDocuments: [{ mountPath: 'prediction.txt', owner: bobId }],
-    cmd: [
-      '/parcel/data/in/test.csv',
-      '/parcel/data/out/prediction.txt',
-    ],
+    cmd: cmd,
     memory: '4G',
   };
 
