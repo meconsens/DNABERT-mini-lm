@@ -1,0 +1,1 @@
+ts-node --esm src/main.ts
