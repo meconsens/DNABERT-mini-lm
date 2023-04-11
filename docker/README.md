@@ -1,5 +1,7 @@
 ## Docker
 
+Before you run the tests below run `npm install`
+
 ### To run runtime tests:
 `./runtimets.sh`
 
